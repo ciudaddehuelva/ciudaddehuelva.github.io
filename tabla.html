@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title>CLAUSURA CDH 22/23</title>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <header>
+    <img src="Logo.png" alt="Logo del club"width="200">
+    <h1>Seguimiento Clausura 22/23 CDH </h1>
+    <h2>Tablas de clasificación</h2>
+  </header>
+
+  <main class="container">
+    <div class="button-container">
+        <h3><a href="index.html" class="button">Inicio</a></h3>
+        <h3><a href="tabla.html" class="button">Tablas de Clasificación</a></h3>
+        <h3><a href="horario.html" class="button">Horario</a></h3>
+        <h3><a href="https://www.cdhuelva.com/" class="button">Web del club</a></h3>
+      </div>
+    <div id="excelContainer"></div>
+  </main>
+
+  <script>
+    var url = 'https://docs.google.com/spreadsheets/d/1B3GvGwLeQ2uoWoL8o_lBcTo-3sAtwTTU/export?format=xlsx';
+
+    function checkForChanges() {
+      var req = new XMLHttpRequest();
+      req.open('GET', url, true);
+      req.responseType = 'arraybuffer';
+
+      req.onload = function(e) {
+        var data = new Uint8Array(req.response);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        var htmlTable = XLSX.utils.sheet_to_html(worksheet);
+
+        document.getElementById('excelContainer').innerHTML = '<table>' + htmlTable + '</table>';
+
+        // Reiniciar la comprobación después de un breve retraso
+        setTimeout(checkForChanges, 5000);
+      };
+
+      req.onerror = function(e) {
+        // Manejar errores de solicitud aquí
+
+        // Reiniciar la comprobación después de un breve retraso incluso si hay errores
+        setTimeout(checkForChanges, 5000);
+      };
+
+      req.send();
+    }
+
+    // Comenzar la comprobación de cambios
+    checkForChanges();
+  </script>
+  <p>&copy; 2023 Club Baloncesto Huelva la Luz©. Web creada por Álvaro Orta.</p>
+</body>
+</html>
